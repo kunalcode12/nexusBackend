@@ -1,0 +1,227 @@
+1. GENERAL INFORMATION
+   Real-Time Bidding (RTB) is an advanced method in digital advertising that allows advertisers to bid for ad impressions
+   in real-time, as a user is loading a webpage or app. It has revolutionized the display advertising industry by making
+   it more efficient, transparent, and personalized.
+
+How RTB Works:
+
+- Ad Exchange: Acts as a marketplace where ad spaces (impressions) from publishers are auctioned. It collects details
+  about each available ad slot (e.g., size, URL, audience data like IP address, cookie ID, or iOS IDFA) and sends a bid
+  request to multiple DSPs.
+- Demand Side Platform (DSP): Represents advertisers in the auction. When a DSP receives a bid request, it:
+  - Evaluates the Request: Checks if the ad slot and audience match an advertiser's targeting criteria.
+  - Decides to Bid or Not: If there's a match, the DSP participates in the auction.
+  - Sets the Bid Price: Using algorithms, it determines the optimal price for the ad impression and sends a bid response
+    back to the Ad Exchange.
+- Auction: The Ad Exchange runs an auction using the bids from all participating DSPs. The highest bidder wins, and
+  their ad is displayed to the user.
+
+Key Terms:
+
+- Ad Impression: A single instance of an ad being displayed to a user.
+- Ad Exchange: A digital marketplace where ad impressions are bought and sold.
+- Demand Side Platform (DSP): A platform used by advertisers to bid for and purchase ad impressions in real-time.
+- Bid Request: Information sent by the Ad Exchange to DSPs about an ad slot, including size, audience data, and more.
+- Bid Response: The DSP’s reply to a bid request, including the bid price and ad creative if participating.
+- Auction: The process where the Ad Exchange determines the winner among all bid responses.
+- Impression event: The display of an ad to a user on a webpage or app.
+- Click event: The action taken by a user when they interact with an ad by selecting it.
+- Conversion event: A desired action completed by the user after interacting with the ad, such as making a purchase or
+  signing up.
+
+The primary goal of RTB is to maximize advertiser outcomes (e.g., clicks, conversions) while staying within a fixed
+budget. DSP algorithms play a crucial role by analyzing vast amounts of data in real-time to bid effectively, ensuring
+advertisers achieve the best return on investment (ROI).
+
+2.  DATA DESCRIPTION AND FILE LIST
+    For the hackathon we shared dataset which should be split into two parts: training and validation. The files in the
+    dataset are plain text and in each row fields are separated by tab.
+
+The dataset includes a set of processed DSP bidding, impression, click, and conversion logs.
+
+These logs include five advertiser campaigns with a fixed relatively high-price bidding strategy, which is for the
+purpose of getting enough impressions and their paying prices. Linear scale normalisation is already applied on all
+types of prices before the logs are released. All logs use same currency unit for pricing: local currency per CPM.
+
+The log format of the data:
++-----+-----------------+-------------------------+------------------------------------------------------------------+
+| Col | Description | Example | Notes |
++-----+-----------------+-------------------------+------------------------------------------------------------------+
+| ^1 | BidID | 014600008...3f5a4f1121 | Unique identifier for the bid request. |
+| 2 | Timestamp | 20130218001203658 | Format: yyyyMMddHHmmssSSS. |
+| †3 | Logtype | 1 | Possible values: 1 (impression), 2 (click), 3 (conversion). |
+| ^4 | VisitorID | 35605620124522340227135 | Internal user ID set in Cookie. |
+| 5 | User-Agent | Mozilla/5.0 (compati...)| Describes the device, operating system, and browser of the user. |
+| ^6 | IP | 118.81.189.\* | IP address of the user. |
+| 7 | Region | 15 | Region code where the user is located. |
+| 8 | City | 16 | City code where the user is located. |
+| ^9 | Adexchange | 2 | Ad exchange platform identifier. |
+| ^10 | Domain | e80f4ac7...c01ad1a049 | Hashed domain of the hosting webpage of the ad slot. |
+| ^11 | URL | hz55b01000...3d6f274121 | Hashed URL of the hosting webpage of the ad slot. |
+| 12 | AnonymousURLID | Null | Used when the URL is masked by ad exchanges. |
+| 13 | AdslotID | 21476898764813 | Identifier for the ad slot. |
+| 14 | Adslotwidth | 300 | Width of the ad slot in pixels. |
+| 15 | Adslotheight | 250 | Height of the ad slot in pixels. |
+| 16 | Adslotvisibility| SecondView | Describes visibility: 1st, 2nd to 10th view or NA (unknown). |
+| 17 | Adslotformat | Fixed | Possible values: Fixed, Pop, Background, Float, or NA (unknown). |
+| ^18 | Adslotfloorprice| 0 | Lowest price at which price publisher allows DSPs to win ad slot.|
+| 19 | CreativeID | e39e178dfd...1ee56acd | Identifier for the creative (ad content). |
+| ^20 | Biddingprice | 753 | The bid price submitted by DSP for this bid request. |
+| †21 | Payingprice | 15 | The highest bid from competitors. (also known as market price) |
+| †22 | KeypageURL | a8bf178ffd...1ee56acd | Key page URL. |
+| ^23 | AdvertiserID | 2345 | Identifier for the advertiser. |
++-----+-----------------+-------------------------+------------------------------------------------------------------+
+Legend:
+
+- Columns with ^ are hashed or modified to anonymize the data.
+- Columns with † are only available in impression/click/conversion logs but not in bid logs.
+
+The complete dataset package includes the following files:
+
+README # This file
+city.txt # City file
+region.txt # Region file
+user.profile.tags.txt # User profile tags id to name mapping file
+bidder.submission.code # Bidding algorithm submission code files in Java/Python
+
+# Bid Dataset
+
+dataset/bid.06.txt
+dataset/bid.07.txt
+dataset/bid.08.txt
+dataset/bid.09.txt
+dataset/bid.10.txt
+dataset/bid.11.txt
+dataset/bid.12.txt
+
+# Click Dataset
+
+dataset/clk.06.txt
+dataset/clk.07.txt
+dataset/clk.08.txt
+dataset/clk.09.txt
+dataset/clk.10.txt
+dataset/clk.11.txt
+dataset/clk.12.txt
+
+# Conversion Dataset
+
+dataset/conv.06.txt
+dataset/conv.07.txt
+dataset/conv.08.txt
+dataset/conv.09.txt
+dataset/conv.10.txt
+dataset/conv.11.txt
+dataset/conv.12.txt
+
+# Impression Dataset
+
+dataset/imp.06.txt
+dataset/imp.07.txt
+dataset/imp.08.txt
+dataset/imp.09.txt
+dataset/imp.10.txt
+dataset/imp.11.txt
+dataset/imp.12.txt
+
+3. DSP BIDDING OPTIMIZATION TASK
+
+The participating teams are required to optimize the following task.
+
+Maximize the number of clicks + N \* the number of conversions,
+Subject to the fixed ad budget.
+
+In this contest, a second-price auction is used. In this mechanism, the second-highest bid determines the market price
+for the winner. If the highest bidder's bid exceeds the market price, the advertiser wins the auction but only pays the
+second-highest bid amount.
+
+Example:
+Suppose the following bids are submitted:
+Bidder A: $5
+Bidder B: $7
+Bidder C: $6
+
+Winning Bidder: Bidder B wins because they placed the highest bid ($7).
+Market Price: $6 (the second-highest bid).
+Payment: Bidder B pays $6, not $7.
+
+In order to get clicks and/or conversions, the DSP bidding server has to first bid on ad exchange to get ad impression
+first. The DSP bidding server pays ad exchange as long as the ad of the advertiser whom the DSP bid for shows up on the
+publisher website, i.e. pay by impression. Paid amount is deducted from the advertiser budget. However, one ad
+impression does not guarantee a click by the user. The user clicks the ad only when (s)he is interested in the ad.
+Actually it is common to see 0.01% ~ 0.2% CTR (Clickthrough Rate) in display advertising. By the same logic, one ad
+click does not guarantee a conversion by the user.
+
+Usually the DSP has a fixed ad budget for each advertiser campaign. The goal of the advertising campaign is to get as
+many clicks and/or conversions as possible subject to the budget constraints. The scoring function is:
+Score = the number of clicks + N \* the number of conversions
+Where N is a number between 1~100. N shows the relative importance of conversion vs. click.
+
+N is different for different advertisers as follows:
++------+------+---------------------+
+| Adv. | N | Industrial Category    |
++------+------+---------------------+
+| 1458 | 0 | Local e-commerce       |
+| 3358 | 2 | Software               | 
+| 3386 | 0 | Global e-commerce      |
+| 3427 | 0 | Oil                    |
+| 3476 | 10 | Tire                  |
++------+------+---------------------+
+
+4. EVALUATION AND SUBMISSION
+   During the evaluation stage, we aim to replicate the real-world bidding process as closely as possible. This means that
+   bidding requests are processed sequentially, one at a time. For each request, the bidder must decide:
+
+- Whether to place a bid, and
+- The bidding price, if a bid is made.
+  Importantly, these decisions must be made without any knowledge of future impression data.
+
+Submission Guidelines:
+We accept evaluation submissions implemented in Java as well as Python. bidder.submission.code folder includes following files:
+java/BidRequest.java # The class that represents a bidding request.
+python/BidRequest.py # The class that represents a bidding request.
+java/Bidder.java # The interface that Bid class must implement.
+python/Bidder.py # The interface that Bid class must implement.
+java/Bid.java # The main class that participants need to update.
+python/Bid.py # The main class that participants need to update.
+
+Participants are required to update the Bid class, which must implement the Bidder interface. Specifically, the
+getBidPrice() method in the Bid class should be implemented to return:
+
+- The bid price for a given bidding request, or
+- -1 if no bid is placed.
+
+To ensure a correct submission, the following naming conventions are mandatory:
+
+- Class Name: Bid
+- Package Name: com.dtu.hackathon.bidding
+
+Participants must adhere to the following constraints:
+
+- Memory Usage: Must not exceed 512 MB, when running their algorithms.
+- Execution Time: The getBidPrice() method must execute within 5 milliseconds per bidding request.
+- Submission Format: The submission must be a ZIP file containing java files, JAR files, optionally model files and
+  documentation containing the following:
+  - Team Name
+  - Team Members
+  - Instructions to run the code
+  - Description of the approach
+  - EDA (Exploratory Data Analysis)
+  - Feature Engineering
+  - Model Selection
+  - Hyperparameter Tuning
+  - Evaluation Strategy
+  - Validation results
+  - Any other relevant information
+- External Libraries: Participants are allowed to use external libraries, but they must be included in the submission
+  JAR package/requirements.txt.
+- Maximum Submission Package Size: The submission package must not exceed 100 MB including source code, JAR libraries,
+  ML model and any other files.
+- JDK/JRE Version: Use JDK 11 for the submission.
+- Python Version: Use Python Version 3.9 for the submission.
+
+Best of luck, and let your model shine!
+
+5. CREDIT AND COPYRIGHT INFORMATION
+   Dataset belongs to IPinYou Inc. Copyright 2014 ACM 978-1-4503-2999-6/14/08. For additional permissions, please contact
+   Permissions@acm.org
