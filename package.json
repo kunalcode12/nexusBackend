@@ -2,9 +2,10 @@
   "name": "newapi",
   "version": "1.0.0",
   "description": "Learning",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
   "author": "kunal",
   "license": "ISC",
